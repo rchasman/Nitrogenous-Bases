@@ -1,20 +1,20 @@
 {
     "nodes": [
         {"atom": "C", "size": 12},
-        {"atom": "H", "size": 1},
-        {"atom": "H", "size": 1},
-        {"atom": "H", "size": 1},
+        {"atom": "H", "size": 3},
+        {"atom": "H", "size": 3},
+        {"atom": "H", "size": 3},
         {"atom": "C", "size": 12},
         {"atom": "C", "size": 12},
         {"atom": "O", "size": 16},
         {"atom": "N", "size": 14},
-        {"atom": "H", "size": 1},
+        {"atom": "H", "size": 3},
         {"atom": "C", "size": 12},
         {"atom": "O", "size": 16},
         {"atom": "N", "size": 14},
-        {"atom": "H", "size": 1},
+        {"atom": "H", "size": 3},
         {"atom": "C", "size": 12},
-        {"atom": "H", "size": 1}
+        {"atom": "H", "size": 3}
     ],
     "links": [
         {"source": 0, "target": 1,  "bond": 1},
