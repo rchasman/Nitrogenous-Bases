@@ -1,62 +1,97 @@
-var width = 960,
-    height = 500;
+var width = 1240,
+    height = 700;
 
 var color = d3.scale.category10();
 
 var radius = d3.scale.sqrt()
     .range([0, 6]);
 
-    var svg = d3.select(".box").append("svg")
+var svg = d3.select(".box").append("svg")
     .attr("width", width)
-    .attr("height", height);
+    .attr("height", height)
+    .attr("id", "canvas");
 
-    var force = d3.layout.force()
+
+var force = d3.layout.force()
     .size([width, height])
-    .charge(-400)
-    .linkDistance(function(d) { return radius(d.source.size) + radius(d.target.size) + 20; });
-    function create_molecule(molecule) {
-        d3.json(molecule, function(graph) {
-            force.nodes(graph.nodes)
-            .links(graph.links)
-            .on("tick", tick)
-            .start();
+    .charge(-200)
+    .linkDistance(function(d) {
+        return radius(d.source.size) + radius(d.target.size) ; });
 
-            var link = svg.selectAll(".link")
-                .data(graph.links)
-                .enter().append("g")
-                .attr("class", "link");
+function create_molecule(){
+        molecule = set_molecule($("#type").val())
+        draw_molecule(molecule)
+}
 
-            link.append("line")
-                .style("stroke-width", function(d) { return (d.bond * 2 - 1) * 2 + "px"; });
+function set_molecule(type){
+    switch(type){
+        case "a":
+            return "js/molecule/adenine.json"
+        case "c":
+            return "js/molecule/cytosine.json"
+        case "t":
+            return "js/molecule/thymine.json"
+        case "g":
+            return "js/molecule/guanine.json"
+    }
+}
 
-            link.filter(function(d) { return d.bond > 1; }).append("line")
-                .attr("class", "separator");
+function draw_molecule(molecule) {
+    scale = "scale(.50)"
+    d3.json(molecule, function(graph) {
+        force.nodes(graph.nodes)
+        .links(graph.links)
+        .on("tick", tick)
+        .start();
 
-            var node = svg.selectAll(".node")
-                .data(graph.nodes)
-                .enter().append("g")
-                .attr("class", "node")
-                .call(force.drag);
+        var text = svg.append("text")
+            .text($("#type option:selected").text())
+            .attr("x", 50)
+            .attr("y", 50)
+            .attr("font-size", "20px");
 
-            node.append("circle")
-                .attr("r", function(d) { return radius(d.size); })
-                .style("fill", function(d) { return color(d.atom); });
+        var link = svg.selectAll(".link")
+            .data(graph.links)
+            .enter().append("g")
+            .attr("class", "link");
 
-            node.append("text")
-                .attr("dy", ".35em")
-                .attr("text-anchor", "middle")
-                .text(function(d) { return d.atom; });
+        link.append("line")
+            .style("stroke-width", function(d) { return (d.bond * 2 - 1) * 2 + "px"; });
 
-            function tick() {
-                link.selectAll("line")
-                    .attr("x1", function(d) { return d.source.x; })
-                    .attr("y1", function(d) { return d.source.y; })
-                    .attr("x2", function(d) { return d.target.x; })
-                    .attr("y2", function(d) { return d.target.y; });
+        link.filter(function(d) { return d.bond > 1; }).append("line")
+            .attr("class", "separator");
 
-                node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
-            }
-        });
-    };
-molecule = "js/molecule/thymine.json"
-create_molecule(molecule)
+        var node = svg.selectAll(".node")
+            .data(graph.nodes)
+            .enter().append("g")
+            .attr("class", "node")
+            .call(force.drag);
+
+        node.append("circle")
+            .attr("r", function(d) { return radius(d.size); })
+            .attr("transform", scale)
+            .style("fill", function(d) { return color(d.atom); });
+
+        node.append("text")
+            .attr("dy", ".35em")
+            .attr("text-anchor", "middle")
+            .style("font-size", ".25em")
+            .text(function(d) { return d.atom; });
+
+        function tick() {
+            link.selectAll("line")
+                .attr("x1", function(d) { return d.source.x; })
+                .attr("y1", function(d) { return d.source.y; })
+                .attr("x2", function(d) { return d.target.x; })
+                .attr("y2", function(d) { return d.target.y; });
+
+            node.attr("transform", function(d) {
+                return "translate(" + d.x + "," + d.y + ")"
+            });
+        }
+    });
+};
+
+function clear_molecule() {
+    $("#canvas").text("")
+}
